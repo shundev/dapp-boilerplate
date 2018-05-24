@@ -1,5 +1,5 @@
 {
-  "name": "Minimum dApp boilerplate",
+  "name": "minimum-dapp-boilerplate",
   "version": "1.0.0",
   "description": "Minimum dApp boilerplate with Parcel, React, Redux and Truffle",
   "main": "index.js",
