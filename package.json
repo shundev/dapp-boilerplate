@@ -1,5 +1,5 @@
 {
-  "name": "minimum-dapp-boilerplate",
+  "name": "dapp-boilerplate",
   "version": "1.0.0",
   "description": "Minimum dApp boilerplate with Parcel, React, Redux and Truffle",
   "main": "index.js",
@@ -13,10 +13,12 @@
   "author": "Shunsuke(http://shunsuke.me/blog-ja)",
   "license": "MIT",
   "dependencies": {
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
+    "react-hot-loader": "^4.2.0"
   },
   "devDependencies": {
-    "parcel-bundler": "^1.6.1"
+    "parcel-bundler": "^1.8.1",
+    "stylus": "^0.54.5"
   }
 }
