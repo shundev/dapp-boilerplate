@@ -1,5 +1,7 @@
 import React from 'react'
 
+import './ChatInput.styl'
+
 export default class ChatInput extends React.Component {
   render() {
       return (
