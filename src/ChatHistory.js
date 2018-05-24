@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import './ChatHistory.styl'
 
@@ -19,4 +20,8 @@ export default class ChatHistory extends React.Component {
       </ul>
     )
   }
+}
+
+ChatHistory.propTypes = {
+  history: PropTypes.arrayOf(PropTypes.string),
 }
