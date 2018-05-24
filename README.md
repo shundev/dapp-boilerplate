@@ -4,7 +4,7 @@ Minimum dApp boilerplate with Parcel, React, Redux and Truffle
 
 ## Installation
 
-* `git clone git@github.com:shunsukeh/dapp-boilerplate.git
+* `git clone git@github.com:shunsukehondo/dapp-boilerplate.git
 * `cd dapp-boilerplate
 * `npm install`
 * `npm start`
