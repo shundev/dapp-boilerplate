@@ -7,21 +7,32 @@ export default class ChatHistory extends React.Component {
   render() {
     return (
       <ul className="collection">
-        <li className="collection-item avatar">
-          <img src="//robohash.org/107378?set=set2&bgset=bg2&size=70x70" alt="107378" className="circle" />
-          <span className="title">Anonymous robot #107378</span>
-          <p>
-            <i className="prefix tiny material-icons">alarm</i>
-            <span className="message-date">05/19/2016 at 1:55PM</span>
-            <br />
-            <span>Hello World!</span>
-          </p>
-        </li>
+      {
+        this.props.history.map((msgObj) => {
+          const imgURL = "//robohash.org/" + msgObj.Who + "?set=set2&bgset=bg2&size=70x70";
+          return (
+            <li className="collection-item avatar" key={ msgObj.When }>
+              <img src={ imgURL } alt="{ msgObj.Who }" className="circle" />
+              <span className="title">Anonymous robot #{ msgObj.Who }</span>
+              <p>
+                <i className="prefix tiny material-icons">alarm</i>
+                <span className="message-date">{ msgObj.When }</span>
+                <br />
+                <span>{ msgObj.What }</span>
+              </p>
+            </li>
+          )
+        })
+      }
       </ul>
     )
   }
 }
 
+class ChatHistoryItem extends React.Component {
+
+}
+
 ChatHistory.propTypes = {
-  history: PropTypes.arrayOf(PropTypes.string),
+  history: PropTypes.arrayOf(PropTypes.object),
 }

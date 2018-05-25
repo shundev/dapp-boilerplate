@@ -13,10 +13,14 @@ class App extends Component {
       userAddress: "0x091225B0D977922de7483e65e24bb9d17dF687EC",
       history: [],
     }
+
+    this.sendMessage = this.sendMessage.bind(this)
   }
 
   sendMessage(message) {
-    console.log("sendMessage", message)
+    this.setState({
+      history: this.state.history.concat(message)
+    })
   }
 
   render() {
