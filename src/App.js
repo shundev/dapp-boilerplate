@@ -134,7 +134,9 @@ class App extends Component {
 
   changeFriend(address) {
     console.log("Change: " + address)
-    getHistory()
+    this.setState({
+      friendAddress: address
+    }, this.getHistory)
   }
 
   render() {
@@ -142,7 +144,7 @@ class App extends Component {
       <div className="App">
         <ChangeFriend friendAddress={ this.state.friendAddress } changeFriend={ this.changeFriend } />
         <ChatHistory history={ this.state.history } getHistory={ this.getHistory }/>
-        <ChatInput userAddress={ this.state.userAddress } sendMessage={ this.sendMessage } />
+        <ChatInput userAddress={ this.state.userAddress } friendAddress={ this.state.friendAddress } sendMessage={ this.sendMessage } />
       </div>
     );
   }

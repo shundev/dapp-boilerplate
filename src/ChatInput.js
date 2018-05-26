@@ -22,7 +22,8 @@ export default class ChatInput extends React.Component {
   }
 
   render() {
-      const imgURL = "//robohash.org/" + this.props.userAddress + "?set=set2&bgset=bg2&size=70x70"
+      const userImgURL = "//robohash.org/" + this.props.userAddress + "?set=set2&bgset=bg2&size=70x70"
+      const friendImgURL = "//robohash.org/" + this.props.friendAddress + "?set=set2&bgset=bg2&size=70x70"
 
       return (
         <footer className="teal">
@@ -32,8 +33,12 @@ export default class ChatInput extends React.Component {
                 <i className="prefix material-icons">chat</i>
                 <input ref="txtMessage" type="text" placeholder="Type your message" />
                 <span className="chip left">
-                  <img src={ imgURL } />
-                  <span>Anonymous robot #{ this.props.userAddress }</span>
+                  <img src={ userImgURL } />
+                  <span>You: { this.props.userAddress }</span>
+                </span>
+                <span className="chip left">
+                  <img src={ friendImgURL } />
+                  <span>Friend: { this.props.friendAddress }</span>
                 </span>
               </div>
               <div className="input-field col s2">
@@ -50,5 +55,6 @@ export default class ChatInput extends React.Component {
 
 ChatInput.propTypes = {
   userAddress: PropTypes.string,
+  friendAddress: PropTypes.string,
   sendMessage: PropTypes.func,
 }

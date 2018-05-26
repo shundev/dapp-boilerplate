@@ -20,7 +20,7 @@ export default class ChangeFriend extends React.Component {
     return (
         <nav>
           <div className="nav-wrapper teal">
-          <form className="container">
+          <form className="container" onSubmit={ this.onSubmit.bind(this) }>
             <div className="row">
               <div className="input-field col s10">
                 <i className="prefix material-icons tiny">person</i>
