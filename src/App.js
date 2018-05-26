@@ -4,6 +4,8 @@ import getWeb3 from './getWeb3'
 
 import ChatInput from './ChatInput'
 import ChatHistory from './ChatHistory'
+import ChangeFriend from './ChangeFriend'
+
 
 // import './App.styl'
 
@@ -12,6 +14,7 @@ class App extends Component {
     super(props)
     this.state = {
       userAddress: "0x0",
+      friendAddress: "0x0",
       history: [],
       web3: null,
       contractInstance: null,
@@ -20,6 +23,7 @@ class App extends Component {
     this.sendMessage = this.sendMessage.bind(this)
     this.initContract = this.initContract.bind(this)
     this.getHistory = this.getHistory.bind(this)
+    this.changeFriend = this.changeFriend.bind(this)
   }
 
   componentWillMount() {
@@ -82,9 +86,8 @@ class App extends Component {
       window.scrollTo(0, document.body.scrollHeight)
     })
 
-    // FIXME: recipient address
     this.state.contractInstance.sendMessage.sendTransaction(
-      "0xe31c5b5731f3Cba04f8CF3B1C8Eb6FCbdC66f4B5",
+      this.state.friendAddress,
       message,
       {from: this.state.userAddress},
       (err, result) => {}
@@ -92,8 +95,7 @@ class App extends Component {
   }
 
   getHistory() {
-    //FIXME: 本当のrecipientに切り替え
-    this.state.contractInstance.getMessages("0xe31c5b5731f3Cba04f8CF3B1C8Eb6FCbdC66f4B5", {from: this.state.userAddress}, (err, messageIds) => {
+    this.state.contractInstance.getMessages(this.state.friendAddress, {from: this.state.userAddress}, (err, messageIds) => {
         var messageCount = 0;
         for (var i=0; i < messageIds.length; i++) {
           if (messageIds[i] == 0) break;
@@ -130,9 +132,15 @@ class App extends Component {
       })
   }
 
+  changeFriend(address) {
+    console.log("Change: " + address)
+    getHistory()
+  }
+
   render() {
     return (
       <div className="App">
+        <ChangeFriend friendAddress={ this.state.friendAddress } changeFriend={ this.changeFriend } />
         <ChatHistory history={ this.state.history } getHistory={ this.getHistory }/>
         <ChatInput userAddress={ this.state.userAddress } sendMessage={ this.sendMessage } />
       </div>
