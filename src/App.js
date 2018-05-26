@@ -42,7 +42,10 @@ class App extends Component {
 
     const instance = new this.state.web3.eth.Contract(contractABI, contractAddress)
 
-    // instance.events.MessageSent({filter: })
+    instance.events.MessageSent({filter: {receiver: this.state.userAddress}})
+    .on("data", function (evt) {
+      this.getHistory()
+    })
 
     this.setState({
       contractInstance: instance,
@@ -71,8 +74,9 @@ class App extends Component {
 
     // FIXME: receiver address
     this.state.contractInstance.methods.sendMessage("0xe31c5b5731f3Cba04f8CF3B1C8Eb6FCbdC66f4B5", message).send({from: this.state.userAddress})
-    .on("receipt", function (receipt) {
-      getHistory()
+    .once("receipt", function (receipt) {
+      console.log("Your message has been mined!")
+      this.getHistory()
     })
   }
 
