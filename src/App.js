@@ -38,12 +38,12 @@ class App extends Component {
   }
 
   initContract() {
-    const contractAddress = "0x4300a0d23f0b406ba88b4ce2d4c07cb8821c30a9"
-    const contractABI = [ { "anonymous": false, "inputs": [ { "indexed": true, "name": "id", "type": "uint256" }, { "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "receiver", "type": "address" }, { "indexed": false, "name": "text", "type": "string" }, { "indexed": false, "name": "created_at", "type": "uint256" } ], "name": "MessageSent", "type": "event" }, { "constant": false, "inputs": [ { "name": "receiver", "type": "address" }, { "name": "text", "type": "string" } ], "name": "sendMessage", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "constant": true, "inputs": [ { "name": "id", "type": "uint256" } ], "name": "getMessage", "outputs": [ { "name": "", "type": "uint256" }, { "name": "", "type": "address" }, { "name": "", "type": "address" }, { "name": "", "type": "string" }, { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "theother", "type": "address" } ], "name": "getMessages", "outputs": [ { "name": "", "type": "uint256[20]" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "uint256" } ], "name": "messages", "outputs": [ { "name": "sender", "type": "address" }, { "name": "receiver", "type": "address" }, { "name": "text", "type": "string" }, { "name": "created_at", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" } ]
+    const contractAddress = "0x7e04d5549470a4f3f7e0d3fc5f66d778ce615856"
+    const contractABI = [ { "anonymous": false, "inputs": [ { "indexed": true, "name": "id", "type": "uint256" }, { "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "recipient", "type": "address" }, { "indexed": false, "name": "text", "type": "string" }, { "indexed": false, "name": "created_at", "type": "uint256" } ], "name": "MessageSent", "type": "event" }, { "constant": false, "inputs": [ { "name": "recipient", "type": "address" }, { "name": "text", "type": "string" } ], "name": "sendMessage", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "constant": true, "inputs": [ { "name": "id", "type": "uint256" } ], "name": "getMessage", "outputs": [ { "name": "", "type": "uint256" }, { "name": "", "type": "address" }, { "name": "", "type": "address" }, { "name": "", "type": "string" }, { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "theother", "type": "address" } ], "name": "getMessages", "outputs": [ { "name": "", "type": "uint256[20]" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "uint256" } ], "name": "messages", "outputs": [ { "name": "sender", "type": "address" }, { "name": "recipient", "type": "address" }, { "name": "text", "type": "string" }, { "name": "created_at", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" } ]
 
     const instance = this.state.web3.eth.contract(contractABI).at(contractAddress)
 
-    instance.MessageSent({receiver: this.state.userAddress})
+    instance.MessageSent({recipient: this.state.userAddress})
     .watch((err, result) => {
       console.log("Received a message.")
       this.getHistory()
@@ -82,7 +82,7 @@ class App extends Component {
       window.scrollTo(0, document.body.scrollHeight)
     })
 
-    // FIXME: receiver address
+    // FIXME: recipient address
     this.state.contractInstance.sendMessage.sendTransaction(
       "0xe31c5b5731f3Cba04f8CF3B1C8Eb6FCbdC66f4B5",
       message,
@@ -92,7 +92,7 @@ class App extends Component {
   }
 
   getHistory() {
-    //FIXME: 本当のReceiverに切り替え
+    //FIXME: 本当のrecipientに切り替え
     this.state.contractInstance.getMessages("0xe31c5b5731f3Cba04f8CF3B1C8Eb6FCbdC66f4B5", {from: this.state.userAddress}, (err, messageIds) => {
         var messageCount = 0;
         for (var i=0; i < messageIds.length; i++) {
