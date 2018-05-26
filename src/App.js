@@ -28,10 +28,11 @@ class App extends Component {
         web3: results.web3
       })
 
-      this.initContract();
-      this.initAccount();
+      this.initAccount(this.initContract);
     })
+  }
 
+  componentDidMount() {
   }
 
   initContract() {
@@ -44,20 +45,33 @@ class App extends Component {
     }, () => {
       //TODO: 本当のReceiverに切り替え
       const history = []
-      this.state.contractInstance.methods.getMessages("0xe31c5b5731f3Cba04f8CF3B1C8Eb6FCbdC66f4B5").call()
-      .then(results => {
-          for (var i=0; i < results.length; i++) {
-            console.log(results[i] + 10)
+      this.state.contractInstance.methods.getMessages("0xe31c5b5731f3Cba04f8CF3B1C8Eb6FCbdC66f4B5").call({from: this.state.userAddress})
+      .then(messageIds => {
+          for (var i=0; i < messageIds.length; i++) {
+            if (messageIds[i] == 0) break;
+
+            this.state.contractInstance.methods.getMessage(messageIds[i]).call({from: this.state.userAddress})
+            .then(message => {
+              history.push({
+                Who: message[0],
+                What: message[2],
+                When: message[3],
+              })
+            })
           }
+
+          this.setState({
+            history: history,
+          })
       })
     })
   }
 
-  initAccount() {
+  initAccount(callback) {
     this.state.web3.eth.getAccounts((err, accounts) => {
       this.setState({
         userAddress: accounts[0],
-      })
+      }, callback)
     })
   }
 

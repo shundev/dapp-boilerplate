@@ -29,10 +29,6 @@ export default class ChatHistory extends React.Component {
   }
 }
 
-class ChatHistoryItem extends React.Component {
-
-}
-
 ChatHistory.propTypes = {
   history: PropTypes.arrayOf(PropTypes.object),
 }
