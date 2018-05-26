@@ -102,6 +102,12 @@ class App extends Component {
           messageCount++;
         }
 
+        if (messageCount === 0) {
+            this.setState({
+              history: []
+            })
+        }
+
         var history = []
         for (var i=0; i < messageCount; i++) {
           this.state.contractInstance.getMessage(messageIds[i], {from: this.state.userAddress}, (err, message) => {
