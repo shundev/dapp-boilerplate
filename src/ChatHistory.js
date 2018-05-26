@@ -15,13 +15,15 @@ export default class ChatHistory extends React.Component {
       {
         this.props.history.map((msgObj) => {
           const imgURL = "//robohash.org/" + msgObj.Who + "?set=set2&bgset=bg2&size=70x70";
+          const messageDate = new Date(msgObj.When * 1000);
+          const messageDateTime = messageDate.toLocaleDateString() + ' at ' + messageDate.toLocaleTimeString();
           return (
-            <li className="collection-item avatar" key={ msgObj.When }>
+            <li className="collection-item avatar" key={ msgObj.Id }>
               <img src={ imgURL } alt="{ msgObj.Who }" className="circle" />
-              <span className="title">Anonymous robot #{ msgObj.Who }</span>
+              <span className="title">From { msgObj.Who }</span>
               <p>
                 <i className="prefix tiny material-icons">alarm</i>
-                <span className="message-date">{ msgObj.When }</span>
+                <span className="message-date">{ messageDateTime }</span>
                 <br />
                 <span>{ msgObj.What }</span>
               </p>

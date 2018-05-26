@@ -12,13 +12,7 @@ export default class ChatInput extends React.Component {
       return
     }
 
-    const msgObj = {
-      Who: this.props.userAddress,
-      What: message,
-      When: new Date().valueOf()
-    }
-
-    this.props.sendMessage(msgObj)
+    this.props.sendMessage(message)
     this.refs.txtMessage.value = ""
     this.refs.txtMessage.focus()
   }
