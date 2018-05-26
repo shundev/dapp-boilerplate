@@ -19,6 +19,7 @@ class App extends Component {
 
     this.sendMessage = this.sendMessage.bind(this)
     this.initContract = this.initContract.bind(this)
+    this.getHistory = this.getHistory.bind(this)
   }
 
   componentWillMount() {
@@ -40,10 +41,17 @@ class App extends Component {
     const contractAddress = "0x4300a0d23f0b406ba88b4ce2d4c07cb8821c30a9"
     const contractABI = [ { "anonymous": false, "inputs": [ { "indexed": true, "name": "id", "type": "uint256" }, { "indexed": true, "name": "sender", "type": "address" }, { "indexed": true, "name": "receiver", "type": "address" }, { "indexed": false, "name": "text", "type": "string" }, { "indexed": false, "name": "created_at", "type": "uint256" } ], "name": "MessageSent", "type": "event" }, { "constant": false, "inputs": [ { "name": "receiver", "type": "address" }, { "name": "text", "type": "string" } ], "name": "sendMessage", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "constant": true, "inputs": [ { "name": "id", "type": "uint256" } ], "name": "getMessage", "outputs": [ { "name": "", "type": "uint256" }, { "name": "", "type": "address" }, { "name": "", "type": "address" }, { "name": "", "type": "string" }, { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "theother", "type": "address" } ], "name": "getMessages", "outputs": [ { "name": "", "type": "uint256[20]" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "uint256" } ], "name": "messages", "outputs": [ { "name": "sender", "type": "address" }, { "name": "receiver", "type": "address" }, { "name": "text", "type": "string" }, { "name": "created_at", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" } ]
 
-    const instance = new this.state.web3.eth.Contract(contractABI, contractAddress)
+    const instance = this.state.web3.eth.contract(contractABI).at(contractAddress)
 
-    instance.events.MessageSent({filter: {receiver: this.state.userAddress}})
-    .on("data", function (evt) {
+    instance.MessageSent({receiver: this.state.userAddress})
+    .watch((err, result) => {
+      console.log("Received a message.")
+      this.getHistory()
+    })
+
+    instance.MessageSent({sender: this.state.userAddress})
+    .watch((err, result) => {
+      console.log("Your message mined.")
       this.getHistory()
     })
 
@@ -63,38 +71,48 @@ class App extends Component {
   sendMessage(message) {
     // Temporary message (not mined)
     const msgObj = {
-      Id: Math.floor(Math.random() * 100000000),
+      Id: Math.floor(Math.random() * 100000000), // overwritten once mined
       Who: this.state.userAddress,
       What: message,
       When: (new Date().valueOf()) / 1000
     }
     this.setState({
       history: this.state.history.concat(msgObj)
+    }, () => {
+      window.scrollTo(0, document.body.scrollHeight)
     })
 
     // FIXME: receiver address
-    this.state.contractInstance.methods.sendMessage("0xe31c5b5731f3Cba04f8CF3B1C8Eb6FCbdC66f4B5", message).send({from: this.state.userAddress})
-    .once("receipt", function (receipt) {
-      console.log("Your message has been mined!")
-      this.getHistory()
-    })
+    this.state.contractInstance.sendMessage.sendTransaction(
+      "0xe31c5b5731f3Cba04f8CF3B1C8Eb6FCbdC66f4B5",
+      message,
+      {from: this.state.userAddress},
+      (err, result) => {}
+    );
   }
 
   getHistory() {
     //FIXME: 本当のReceiverに切り替え
-    this.state.contractInstance.methods.getMessages("0xe31c5b5731f3Cba04f8CF3B1C8Eb6FCbdC66f4B5").call({from: this.state.userAddress})
-      .then(messageIds => {
-          for (var i=0; i < messageIds.length; i++) {
-            if (messageIds[i] == 0) break;
-            this.state.contractInstance.methods.getMessage(messageIds[i]).call({from: this.state.userAddress})
-            .then(message => {
+    this.state.contractInstance.getMessages("0xe31c5b5731f3Cba04f8CF3B1C8Eb6FCbdC66f4B5", {from: this.state.userAddress}, (err, messageIds) => {
+        var messageCount = 0;
+        for (var i=0; i < messageIds.length; i++) {
+          if (messageIds[i] == 0) break;
+          messageCount++;
+        }
+
+        var history = []
+        for (var i=0; i < messageCount; i++) {
+          this.state.contractInstance.getMessage(messageIds[i], {from: this.state.userAddress}, (err, message) => {
+            history = history.concat({
+                Id: message[0],
+                Who: message[1],
+                What: message[3],
+                When: message[4],
+            })
+
+            if (history.length == messageCount) {
               this.setState({
-                history: this.state.history.concat({
-                  Id: message[0],
-                  Who: message[1],
-                  What: message[3],
-                  When: message[4],
-                }).sort((m1, m2) => {
+                history: history.sort((m1, m2) => {
                   if (m1.When > m2.When) {
                     return 1;
                   } else if (m1.When < m2.When) {
@@ -103,9 +121,12 @@ class App extends Component {
                     return 0;
                   }
                 })
+              }, () => {
+                window.scrollTo(0, document.body.scrollHeight)
               })
-            })
-          }
+            }
+          })
+        }
       })
   }
 
